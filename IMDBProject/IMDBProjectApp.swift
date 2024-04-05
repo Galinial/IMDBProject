@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct IMDBProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeScreenView(
+                store: Store(initialState: HomeScreenFeature.State(mediaResult: [])) {
+                    HomeScreenFeature()
+                }
+            )
         }
     }
 }
