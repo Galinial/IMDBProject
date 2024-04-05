@@ -65,4 +65,19 @@ class NetworkManager {
             dataTask.resume()
         }
     }
+    
+    func fetchReviews() async throws -> [Review] {
+        let url = URL(string: "https://api.themoviedb.org/3/movie/823464/reviews?language=en-US&page=1")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase // Set key decoding strategy
+        
+        let reviewResponse = try decoder.decode(ReviewResponse.self, from: data)
+        return reviewResponse.results
+    }
 }

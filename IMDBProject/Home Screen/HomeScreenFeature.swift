@@ -17,6 +17,7 @@ struct HomeScreenFeature {
     @ObservableState
     struct State: Equatable {
         var mediaItems: IdentifiedArrayOf<MediaItem>
+        var path = StackState<MediaItemDetailsFeature.State>()
     }
     
     enum Action: Equatable {
@@ -25,6 +26,7 @@ struct HomeScreenFeature {
         case popularMoviesResponse([MediaItem])
         case trendingTVShowsResponse([MediaItem])
         case popularTVShowsResponse([MediaItem])
+        case path(StackAction<MediaItemDetailsFeature.State, MediaItemDetailsFeature.Action>)
     }
     
     var body: some ReducerOf<Self> {
@@ -37,18 +39,38 @@ struct HomeScreenFeature {
                     let result = try? await networkManager.getMediaFor(urlExtension: .trendingMovies)
                     await send(.trendingMoviesReponse(result ?? []))
                 }
-                    
+                
             case let .trendingMoviesReponse(movies):
                 state.mediaItems = IdentifiedArrayOf<MediaItem>(uniqueElements: movies)
+                return .run { send in
+                    let result = try? await networkManager.getMediaFor(urlExtension: .popularMovies)
+                    await send(.popularMoviesResponse(result ?? []))
+                }
+            case let .popularMoviesResponse(movies):
+                state.mediaItems += movies
+                return .run { send in
+                    let result = try? await networkManager.getMediaFor(urlExtension: .trendingTVShows)
+                    await send(.trendingTVShowsResponse(result ?? []))
+                }
+            case let .trendingTVShowsResponse(tvShows):
+                state.mediaItems += tvShows
+                return .run { send in
+                    let result = try? await networkManager.getMediaFor(urlExtension: .trendingTVShows)
+                    await send(.trendingTVShowsResponse(result ?? []))
+                }
+            case let .popularTVShowsResponse(tvShows):
+                state.mediaItems += tvShows
+                return .run { send in
+                    let result = try? await networkManager.getMediaFor(urlExtension: .popularTVShows)
+                    await send(.popularTVShowsResponse(result ?? []))
+                }
+            case .path:
                 return .none
-            case .popularMoviesResponse(_):
-                return .none
-            case .trendingTVShowsResponse(_):
-                return .none
-            case .popularTVShowsResponse(_):
-                return .none
-                
             }
+        }
+        .forEach(\.path, action: \.path) {
+            MediaItemDetailsFeature()
         }
     }
 }
+
