@@ -13,7 +13,9 @@ struct IMDBProjectApp: App {
     var body: some Scene {
         WindowGroup {
             HomeScreenView(
-                store: Store(initialState: HomeScreenFeature.State(mediaResult: [])) {
+                store: Store(initialState: HomeScreenFeature.State(
+                    mediaItems: [])
+                ) {
                     HomeScreenFeature()
                 }
             )

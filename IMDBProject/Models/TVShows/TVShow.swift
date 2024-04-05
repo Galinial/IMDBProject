@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct TVShow: Codable, Equatable, Identifiable {
+struct TVShow: Codable {
+    var mediaResult: MediaType = .tvShow
+    
     let adult: Bool
     let backdropPath: String?
     let id: Int

@@ -18,8 +18,8 @@
 		3CB6EF1A2BC041B90055E9AA /* TVShowResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6EF192BC041B90055E9AA /* TVShowResponse.swift */; };
 		3CB6EF1C2BC041D00055E9AA /* TVShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6EF1B2BC041D00055E9AA /* TVShow.swift */; };
 		3CB6EF1E2BC046320055E9AA /* HomeScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6EF1D2BC046320055E9AA /* HomeScreenView.swift */; };
-		3CB6EF212BC047FC0055E9AA /* MediaResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6EF202BC047FC0055E9AA /* MediaResult.swift */; };
-		3CB6EF232BC048FA0055E9AA /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6EF222BC048FA0055E9AA /* ImageDownloader.swift */; };
+		3CB6EF212BC047FC0055E9AA /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6EF202BC047FC0055E9AA /* MediaType.swift */; };
+		3CB6EF292BC062550055E9AA /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6EF282BC062550055E9AA /* MediaItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,8 +34,8 @@
 		3CB6EF192BC041B90055E9AA /* TVShowResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TVShowResponse.swift; path = ../../../../../../../../Applications/TVShowResponse.swift; sourceTree = "<group>"; };
 		3CB6EF1B2BC041D00055E9AA /* TVShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShow.swift; sourceTree = "<group>"; };
 		3CB6EF1D2BC046320055E9AA /* HomeScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenView.swift; sourceTree = "<group>"; };
-		3CB6EF202BC047FC0055E9AA /* MediaResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaResult.swift; sourceTree = "<group>"; };
-		3CB6EF222BC048FA0055E9AA /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
+		3CB6EF202BC047FC0055E9AA /* MediaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaType.swift; sourceTree = "<group>"; };
+		3CB6EF282BC062550055E9AA /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +69,7 @@
 		3CA5747F2BBF2ADD000A806F /* IMDBProject */ = {
 			isa = PBXGroup;
 			children = (
+				3CB6EF272BC062490055E9AA /* MediaItem */,
 				3CB6EF1F2BC047E90055E9AA /* Enum */,
 				3CB6EF122BC0412B0055E9AA /* Models */,
 				3CB6EF0E2BC03F980055E9AA /* Network API */,
@@ -101,7 +102,6 @@
 			isa = PBXGroup;
 			children = (
 				3CB6EF102BC03FB20055E9AA /* NetworkManager.swift */,
-				3CB6EF222BC048FA0055E9AA /* ImageDownloader.swift */,
 			);
 			path = "Network API";
 			sourceTree = "<group>";
@@ -136,9 +136,17 @@
 		3CB6EF1F2BC047E90055E9AA /* Enum */ = {
 			isa = PBXGroup;
 			children = (
-				3CB6EF202BC047FC0055E9AA /* MediaResult.swift */,
+				3CB6EF202BC047FC0055E9AA /* MediaType.swift */,
 			);
 			path = Enum;
+			sourceTree = "<group>";
+		};
+		3CB6EF272BC062490055E9AA /* MediaItem */ = {
+			isa = PBXGroup;
+			children = (
+				3CB6EF282BC062550055E9AA /* MediaItem.swift */,
+			);
+			path = MediaItem;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,11 +230,11 @@
 				3CB6EF162BC041510055E9AA /* MovieResponse.swift in Sources */,
 				3CB6EF1E2BC046320055E9AA /* HomeScreenView.swift in Sources */,
 				3CB6EF1C2BC041D00055E9AA /* TVShow.swift in Sources */,
-				3CB6EF212BC047FC0055E9AA /* MediaResult.swift in Sources */,
-				3CB6EF232BC048FA0055E9AA /* ImageDownloader.swift in Sources */,
+				3CB6EF212BC047FC0055E9AA /* MediaType.swift in Sources */,
 				3CA574812BBF2ADD000A806F /* IMDBProjectApp.swift in Sources */,
 				3CB6EF0D2BC03B7B0055E9AA /* HomeScreenFeature.swift in Sources */,
 				3CB6EF182BC0416D0055E9AA /* Movie.swift in Sources */,
+				3CB6EF292BC062550055E9AA /* MediaItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

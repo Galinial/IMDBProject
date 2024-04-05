@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 class NetworkManager {
     
@@ -25,41 +26,43 @@ class NetworkManager {
     }
     
     // MARK: GET Media Request
-    func getMediaFor(urlExtension: getURLExtension ,completion: @escaping (MediaResult?, Error?) -> Void) {
-        
-        var url = baseURL
-        url += urlExtension.rawValue
-        
-        let request = NSMutableURLRequest(url: NSURL(string: url) as? URL ?? URL(fileURLWithPath: ""),
-                                          cachePolicy: .useProtocolCachePolicy,
-                                          timeoutInterval: 10.0)
-        
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = self.headers
-        
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) in
-            if let error = error {
-                completion(nil, error)
-            } else {
-                if let jsonData = data {
-                    do {
-                        let decoder = JSONDecoder()
-                        switch urlExtension {
-                        case .popularMovies, .trendingMovies:
-                            let movieResponse = try decoder.decode(MovieResponse.self, from: jsonData)
-                            completion(.movies(movieResponse.results), nil)
-                        case .popularTVShows, .trendingTVShows:
-                            let tvShowResponse = try decoder.decode(TVShowResponse.self, from: jsonData)
-                            completion(.tvShows(tvShowResponse.results), nil)
+    func getMediaFor(urlExtension: getURLExtension) async throws -> [MediaItem] {
+        return try await withCheckedThrowingContinuation { continuation in
+            var url = baseURL
+            url += urlExtension.rawValue
+            
+            let request = NSMutableURLRequest(url: URL(string: url) ?? URL(fileURLWithPath: ""),
+                                              cachePolicy: .useProtocolCachePolicy,
+                                              timeoutInterval: 10.0)
+            
+            request.httpMethod = "GET"
+            request.allHTTPHeaderFields = self.headers
+            
+            let session = URLSession.shared
+            let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    if let jsonData = data {
+                        do {
+                            let decoder = JSONDecoder()
+                            switch urlExtension {
+                            case .popularMovies, .trendingMovies:
+                                let movieResponse = try decoder.decode(MovieResponse.self, from: jsonData)
+                                let mediaItems = movieResponse.results.map { MediaItem(backdropPath: $0.backdropPath, genreIds: $0.genreIds, id: $0.id, originalLanguage: $0.originalLanguage, overview: $0.overview, popularity: $0.popularity, posterPath: $0.posterPath, voteAverage: $0.voteAverage, voteCount: $0.voteCount, originalName: $0.originalTitle, mediaResult: .movie) }
+                                continuation.resume(returning: mediaItems)
+                            case .popularTVShows, .trendingTVShows:
+                                let tvShowResponse = try decoder.decode(TVShowResponse.self, from: jsonData)
+                                let mediaItems = tvShowResponse.results.map { MediaItem(backdropPath: $0.backdropPath, genreIds: $0.genreIds, id: $0.id, originalLanguage: $0.originalLanguage, overview: $0.overview, popularity: $0.popularity, posterPath: $0.posterPath, voteAverage: $0.voteAverage, voteCount: $0.voteCount, originalName: $0.originalName, mediaResult: .tvShow) }
+                                continuation.resume(returning: mediaItems)
+                            }
+                        } catch {
+                            continuation.resume(throwing: error)
                         }
-                    } catch {
-                        print(error)
-                        completion(nil, error)
                     }
                 }
             }
+            dataTask.resume()
         }
-        dataTask.resume()
     }
 }

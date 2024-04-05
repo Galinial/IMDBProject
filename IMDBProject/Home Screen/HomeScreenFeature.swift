@@ -16,15 +16,15 @@ struct HomeScreenFeature {
     
     @ObservableState
     struct State: Equatable {
-        var mediaResult: IdentifiedArrayOf<MediaResult>
+        var mediaItems: IdentifiedArrayOf<MediaItem>
     }
     
     enum Action: Equatable {
         case viewOnAppear
-        case trendingMoviesReponse([Movie])
-        case popularMoviesResponse([Movie])
-        case trendingTVShowsResponse([TVShow])
-        case popularTVShowsResponse([TVShow])
+        case trendingMoviesReponse([MediaItem])
+        case popularMoviesResponse([MediaItem])
+        case trendingTVShowsResponse([MediaItem])
+        case popularTVShowsResponse([MediaItem])
     }
     
     var body: some ReducerOf<Self> {
@@ -32,76 +32,21 @@ struct HomeScreenFeature {
             switch action {
                 
             case .viewOnAppear:
+                
                 return .run { send in
-                    networkManager.getMediaFor(urlExtension: .trendingMovies) { mediaResult, error in
-                        if let mediaResult = mediaResult {
-                            switch mediaResult {
-                            case .movies(let movies):
-                                DispatchQueue.main.async {
-                                    send(.trendingMoviesReponse(movies))
-                                }
-                            default:
-                                break
-                            }
-                        } else if let error = error {
-                            // Handle error
-                        }
-                    }
+                    let result = try? await networkManager.getMediaFor(urlExtension: .trendingMovies)
+                    await send(.trendingMoviesReponse(result ?? []))
                 }
+                    
             case let .trendingMoviesReponse(movies):
-                state.mediaResult = IdentifiedArrayOf(uniqueElements: movies.map { MediaResult.movies([$0]) })
+                state.mediaItems = IdentifiedArrayOf<MediaItem>(uniqueElements: movies)
                 return .none
             case .popularMoviesResponse(_):
-                return .run { send in
-                    networkManager.getMediaFor(urlExtension: .trendingMovies) { mediaResult, error in
-                        if let mediaResult = mediaResult {
-                            switch mediaResult {
-                            case .movies(let movies):
-                                DispatchQueue.main.async {
-                                    send(.trendingMoviesReponse(movies))
-                                }
-                            default:
-                                break
-                            }
-                        } else if let error = error {
-                            // Handle error
-                        }
-                    }
-                }
+                return .none
             case .trendingTVShowsResponse(_):
-                return .run { send in
-                    networkManager.getMediaFor(urlExtension: .trendingMovies) { mediaResult, error in
-                        if let mediaResult = mediaResult {
-                            switch mediaResult {
-                            case .movies(let movies):
-                                DispatchQueue.main.async {
-                                    send(.trendingMoviesReponse(movies))
-                                }
-                            default:
-                                break
-                            }
-                        } else if let error = error {
-                            // Handle error
-                        }
-                    }
-                }
+                return .none
             case .popularTVShowsResponse(_):
-                return .run { send in
-                    networkManager.getMediaFor(urlExtension: .trendingMovies) { mediaResult, error in
-                        if let mediaResult = mediaResult {
-                            switch mediaResult {
-                            case .movies(let movies):
-                                DispatchQueue.main.async {
-                                    send(.trendingMoviesReponse(movies))
-                                }
-                            default:
-                                break
-                            }
-                        } else if let error = error {
-                            // Handle error
-                        }
-                    }
-                }
+                return .none
                 
             }
         }

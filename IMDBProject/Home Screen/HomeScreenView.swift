@@ -15,41 +15,33 @@ struct HomeScreenView: View {
     let store: StoreOf<HomeScreenFeature>
     
     var body: some View {
-        List {
-            ForEach(store.mediaResult) { media in
-                switch media {
-                case .movies(let movies):
+        ScrollView(.horizontal) {
+            LazyHStack {
+                ForEach(store.state.mediaItems) { mediaItem in
                     VStack {
-                        ForEach(movies) { movie in
-                            HStack {
-                                Text(movie.title)
-                                AsyncImage(url: URL(string: imageDownloadBaseURL + (movie.backdropPath ?? ""))) { phase in
-                                    if let image = phase.image {
-                                        // Display the loaded image
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 200, height: 200)
-                                            .clipShape(.circle)
-                                    } else if phase.error != nil {
-                                        Color.gray
-                                            .frame(width: 200, height: 200)
-                                    } else {
-                                        // Display loading view while loading
-                                        ProgressView()
-                                            .frame(width: 200, height: 200)
-                                    }
-                                    
-                                }
+                        AsyncImage(url: URL(string: imageDownloadBaseURL + (mediaItem.backdropPath ?? ""))) { phase in
+                            if let image = phase.image {
+                                // Display the loaded image
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 250, height: 600)
+                            } else if phase.error != nil {
+                                Color.gray
+                            } else {
+                                // Display loading view while loading
+                                ProgressView()
+                                    .frame(width: 250, height: 600)
                             }
                         }
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .padding(.bottom, 8)
+                        
+                        Text(mediaItem.originalName)
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
                     }
-                case .tvShows(let tvShows):
-                    VStack {
-                        ForEach(tvShows) { tvShow in
-                            Text(tvShow.name)
-                        }
-                    }
+                    .padding(.horizontal, 8)
                 }
             }
         }.onAppear() {
