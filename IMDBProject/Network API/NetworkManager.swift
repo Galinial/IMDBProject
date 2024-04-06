@@ -10,7 +10,6 @@ import Combine
 
 class NetworkManager {
     
-    private let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
     private let baseURL = "https://api.themoviedb.org/3/"
     
     private let headers = [
@@ -23,6 +22,8 @@ class NetworkManager {
         case popularTVShows = "tv/popular?language=en-US&page=1"
         case trendingMovies = "trending/movie/day?language=en-US"
         case trendingTVShows = "trending/tv/day?language=en-US"
+        case topRatedMovies = "movie/top_rated?language=en-US&page=1"
+        case nowPlayingMovies = "movie/now_playing?language=en-US&page=1"
     }
     
     // MARK: GET Media Request
@@ -47,7 +48,7 @@ class NetworkManager {
                         do {
                             let decoder = JSONDecoder()
                             switch urlExtension {
-                            case .popularMovies, .trendingMovies:
+                            case .popularMovies, .trendingMovies, .nowPlayingMovies, .topRatedMovies:
                                 let movieResponse = try decoder.decode(MovieResponse.self, from: jsonData)
                                 let mediaItems = movieResponse.results.map { MediaItem(backdropPath: $0.backdropPath, genreIds: $0.genreIds, id: $0.id, originalLanguage: $0.originalLanguage, overview: $0.overview, popularity: $0.popularity, posterPath: $0.posterPath, voteAverage: $0.voteAverage, voteCount: $0.voteCount, originalName: $0.originalTitle, mediaResult: .movie) }
                                 continuation.resume(returning: mediaItems)
@@ -66,8 +67,8 @@ class NetworkManager {
         }
     }
     
-    func fetchReviews() async throws -> [Review] {
-        let url = URL(string: "https://api.themoviedb.org/3/movie/823464/reviews?language=en-US&page=1")!
+    func fetchReviews(mediaType: MediaType, mediaId: String) async throws -> [Review] {
+        let url = URL(string: "https://api.themoviedb.org/3/\(mediaType.rawValue)/\(mediaId)/reviews?language=en-US&page=1")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
@@ -78,6 +79,7 @@ class NetworkManager {
         decoder.keyDecodingStrategy = .convertFromSnakeCase // Set key decoding strategy
         
         let reviewResponse = try decoder.decode(ReviewResponse.self, from: data)
+        print(reviewResponse)
         return reviewResponse.results
     }
 }

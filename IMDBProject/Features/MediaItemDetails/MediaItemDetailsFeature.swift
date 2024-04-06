@@ -20,7 +20,7 @@ struct MediaItemDetailsFeature {
     }
     
     enum Action: Equatable {
-        case viewOnAppear
+        case viewOnAppear(MediaItem)
         case reviewResponse([Review])
     }
     
@@ -28,9 +28,9 @@ struct MediaItemDetailsFeature {
         Reduce { state, action in
             switch action {
                 
-            case .viewOnAppear:
+            case let .viewOnAppear(mediaItem):
                 return .run { send in
-                    let result = try? await networkManager.fetchReviews()
+                    let result = try? await networkManager.fetchReviews(mediaType:mediaItem.mediaResult , mediaId: mediaItem.id.description)
                     await send(.reviewResponse(result ?? []))
                 }
             case let .reviewResponse(reviews):

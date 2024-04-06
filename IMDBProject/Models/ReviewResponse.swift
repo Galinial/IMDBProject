@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ReviewResponse: Codable {
+struct ReviewResponse: Codable, Equatable {
     let id: Int
     let page: Int
     let results: [Review]

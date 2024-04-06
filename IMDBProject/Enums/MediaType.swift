@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum MediaType: Equatable {
-    case movie
-    case tvShow
+enum MediaType: String, Equatable {
+    case movie = "movie"
+    case tvShow = "tv"
 }

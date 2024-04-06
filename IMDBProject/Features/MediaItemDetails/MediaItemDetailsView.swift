@@ -24,19 +24,18 @@ struct MediaItemDetailsView: View {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: 250, height: 600)
+                                .frame(width: 325, height: 600)
                         } else if phase.error != nil {
                             Color.gray
                         } else {
                             // Display loading view while loading
                             ProgressView()
-                                .frame(width: 250, height: 600)
+                                .frame(width: 300, height: 600)
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .padding(.bottom, 8)
                     Text("Title: \(store.mediaItem.originalName)")
-                    Text("Rating: \(store.mediaItem.voteAverage)")
+                    Text("Rating: \(String(format: "%.1f", store.mediaItem.voteAverage))")
                     Text("Overview: \(store.mediaItem.overview)")
 //                  Text("Trailer") couldn't find it in any GET API Request
 //                  Text("case") couldn't find it in any GET API Request
@@ -53,7 +52,7 @@ struct MediaItemDetailsView: View {
                 }
             }
             .onAppear {
-                store.send(.viewOnAppear)
+                store.send(.viewOnAppear(store.mediaItem))
             }
         }
         .navigationTitle(Text(store.mediaItem.originalName))

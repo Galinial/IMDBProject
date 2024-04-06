@@ -12,13 +12,11 @@ import ComposableArchitecture
 struct IMDBProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeScreenView(
-                store: Store(initialState: HomeScreenFeature.State(
-                    mediaItems: [])
+            AppView(store: Store(
+                initialState: AppFeature.State()
                 ) {
-                    HomeScreenFeature()
-                }
-            )
+                    AppFeature()
+                })
         }
     }
 }

@@ -28,10 +28,7 @@ struct HomeScreenView: View {
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 250, height: 600)
-                                    } else if phase.error != nil {
-                                        Color.gray
                                     } else {
-                                        // Display loading view while loading
                                         ProgressView()
                                             .frame(width: 250, height: 600)
                                     }
