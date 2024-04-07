@@ -20,7 +20,6 @@ struct MediaItemDetailsView: View {
                 Section("Details") {
                     AsyncImage(url: URL(string: imageDownloadBaseURL + (store.mediaItem.posterPath ?? ""))) { phase in
                         if let image = phase.image {
-                            // Display the loaded image
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
@@ -28,7 +27,6 @@ struct MediaItemDetailsView: View {
                         } else if phase.error != nil {
                             Color.gray
                         } else {
-                            // Display loading view while loading
                             ProgressView()
                                 .frame(width: 300, height: 600)
                         }
@@ -39,19 +37,43 @@ struct MediaItemDetailsView: View {
                     } label: {
                         Image(systemName: store.state.isFavorite ? "star.fill" : "star")
                     }
-                    Text("Title: \(store.mediaItem.originalName)")
-                    Text("Rating: \(String(format: "%.1f", store.mediaItem.voteAverage))")
-                    Text("Overview: \(store.mediaItem.overview)")
-//                  Text("Trailer") couldn't find it in any GET API Request
-//                  Text("case") couldn't find it in any GET API Request
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("Title: ").fontWeight(.bold)
+                        Text(store.mediaItem.originalName)
+                    }
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("Rating: ").fontWeight(.bold)
+                        Text(String(format: "%.1f", store.mediaItem.voteAverage))
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("Overview: ").fontWeight(.bold)
+                        Text(store.mediaItem.overview)
+                    }
+//                  *Trailer* couldn't find it in any GET API Request
+//                  *case* couldn't find it in any GET API Request
                 }
-                    ForEach(store.state.reviews) { review in
-                        Section("Review") {
+                ForEach(store.state.reviews) { review in
+                    Section("Review") {
                         List {
-                            Text("Username: \(review.authorDetails.username)")
-                            Text("Name: \(review.authorDetails.name)")
-                            Text("Rating: \(review.authorDetails.rating)")
-                            Text("Message: \(review.content)")
+                            HStack(alignment: .firstTextBaseline) {
+                                Text("Username: ").fontWeight(.bold)
+                                Text(review.authorDetails.username)
+                            }
+                            if !review.authorDetails.name.isEmpty {
+                                HStack(alignment: .firstTextBaseline) {
+                                    Text("Name: ").fontWeight(.bold)
+                                    Text(review.authorDetails.name)
+                                }
+                            }
+                            HStack(alignment: .firstTextBaseline) {
+                                Text("Rating: ").fontWeight(.bold)
+                                Text(review.authorDetails.rating.description)
+                            }
+                            VStack(alignment: .leading) {
+                                Text("Message: ").fontWeight(.bold)
+                                Text(review.content)
+                            }
                         }
                     }
                 }

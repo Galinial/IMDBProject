@@ -16,12 +16,11 @@ struct HomeScreenFeature {
     
     @ObservableState
     struct State: Equatable {
+        let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
         var mediaItems: IdentifiedArrayOf<MediaItem>
         var path = StackState<MediaItemDetailsFeature.State>()
         
-        var isHapticsEnabled = true
         var searchTerm = ""
-        
         var filteredMedia: IdentifiedArrayOf<MediaItem> {
             guard !searchTerm.isEmpty else { return mediaItems }
             return mediaItems.filter({ $0.originalName.localizedCaseInsensitiveContains(searchTerm) })
@@ -38,7 +37,6 @@ struct HomeScreenFeature {
         
         case searchTermChanged(String)
         case binding(BindingAction<State>)
-        
     }
     
     var body: some ReducerOf<Self> {
@@ -52,34 +50,34 @@ struct HomeScreenFeature {
             case .viewOnAppear:
                 
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .trendingMovies)
+                    let result = try? await networkManager.getMediaFor(endPoint: .trendingMovies)
                     await send(.trendingMoviesReponse(result ?? []))
                 }
                 
             case let .trendingMoviesReponse(movies):
                 state.mediaItems += IdentifiedArrayOf<MediaItem>(uniqueElements: movies)
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .popularMovies)
+                    let result = try? await networkManager.getMediaFor(endPoint: .popularMovies)
                     await send(.popularMoviesResponse(result ?? []))
                 }
             case let .popularMoviesResponse(movies):
                 state.mediaItems += movies
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .trendingTVShows)
+                    let result = try? await networkManager.getMediaFor(endPoint: .trendingTVShows)
                     await send(.trendingTVShowsResponse(result ?? []))
                 }
                 
             case let .trendingTVShowsResponse(tvShows):
                 state.mediaItems += tvShows
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .trendingTVShows)
+                    let result = try? await networkManager.getMediaFor(endPoint: .trendingTVShows)
                     await send(.trendingTVShowsResponse(result ?? []))
                 }
                 
             case let .popularTVShowsResponse(tvShows):
                 state.mediaItems += tvShows
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .popularTVShows)
+                    let result = try? await networkManager.getMediaFor(endPoint: .popularTVShows)
                     await send(.popularTVShowsResponse(result ?? []))
                 }
                 

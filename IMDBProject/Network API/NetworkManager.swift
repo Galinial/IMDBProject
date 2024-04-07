@@ -23,34 +23,19 @@ class NetworkManager {
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3OTc1MzdjZWMxYTdjMmI0Mjc1ZGVhZGMzY2U4ZjYxZCIsInN1YiI6IjY2MGRiNjEwYzhhNWFjMDE3YzdiNTkzZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BUh0kOkvviZABohQR8SqfB_hePepzsrjKaB46ahFhjc"
     ]
     
-    enum getURLExtension: String {
-        case popularMovies = "movie/popular?language=en-US&page=1"
-        case popularTVShows = "tv/popular?language=en-US&page=1"
-        
-        case trendingMovies = "trending/movie/day?language=en-US"
-        case trendingTVShows = "trending/tv/day?language=en-US"
-        
-        case topRatedMovies = "movie/top_rated?language=en-US&page=1"
-        case topRatedTVshows = "tv/top_rated?language=en-US&page=1"
-        
-        case nowPlayingMovies = "movie/now_playing?language=en-US&page=1"
-        
-        case favoriteMovies = "account/21182875/favorite/movies?language=en-US&page=1&sort_by=created_at.asc"
-        case favoriteTVShows = "account/21182875/favorite/tv?language=en-US&page=1&sort_by=created_at.asc"
-    }
-    
     // MARK: GET Media Request
-    func getMediaFor(urlExtension: getURLExtension) async throws -> [MediaItem] {
-        return try await withCheckedThrowingContinuation { continuation in
-            var url = baseURL
-            url += urlExtension.rawValue
+    
+    func getMediaFor(endPoint: APIEndpoint) async throws -> ([MediaItem]) {
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            var url = self?.baseURL ?? ""
+            url += endPoint.description
             
             let request = NSMutableURLRequest(url: URL(string: url) ?? URL(fileURLWithPath: ""),
                                               cachePolicy: .useProtocolCachePolicy,
                                               timeoutInterval: 10.0)
             
             request.httpMethod = "GET"
-            request.allHTTPHeaderFields = self.headersForGet
+            request.allHTTPHeaderFields = self?.headersForGet
             
             let session = URLSession.shared
             let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) in
@@ -60,12 +45,12 @@ class NetworkManager {
                     if let jsonData = data {
                         do {
                             let decoder = JSONDecoder()
-                            switch urlExtension {
+                            switch endPoint {
                             case .popularMovies, .trendingMovies, .nowPlayingMovies, .topRatedMovies, .favoriteMovies:
                                 let movieResponse = try decoder.decode(MovieResponse.self, from: jsonData)
                                 let mediaItems = movieResponse.results.map { MediaItem(backdropPath: $0.backdropPath, genreIds: $0.genreIds, id: $0.id, originalLanguage: $0.originalLanguage, overview: $0.overview, popularity: $0.popularity, posterPath: $0.posterPath, voteAverage: $0.voteAverage, voteCount: $0.voteCount, originalName: $0.originalTitle, mediaResult: .movie) }
                                 continuation.resume(returning: mediaItems)
-                            case .popularTVShows, .trendingTVShows, .topRatedTVshows, .favoriteTVShows:
+                            case .popularTVShows, .trendingTVShows, .topRatedTVShows, .favoriteTVShows:
                                 let tvShowResponse = try decoder.decode(TVShowResponse.self, from: jsonData)
                                 let mediaItems = tvShowResponse.results.map { MediaItem(backdropPath: $0.backdropPath, genreIds: $0.genreIds, id: $0.id, originalLanguage: $0.originalLanguage, overview: $0.overview, popularity: $0.popularity, posterPath: $0.posterPath, voteAverage: $0.voteAverage, voteCount: $0.voteCount, originalName: $0.originalName, mediaResult: .tvShow) }
                                 continuation.resume(returning: mediaItems)

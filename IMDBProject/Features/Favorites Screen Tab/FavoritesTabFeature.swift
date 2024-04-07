@@ -15,6 +15,7 @@ struct FavoritesTabFeature {
     
     @ObservableState
     struct State: Equatable {
+        let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
         var mediaItems: IdentifiedArrayOf<MediaItem>
         var path = StackState<MediaItemDetailsFeature.State>()
     }
@@ -33,13 +34,13 @@ struct FavoritesTabFeature {
             case .viewOnAppear:
                 
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .favoriteMovies)
+                    let result = try? await networkManager.getMediaFor(endPoint: .favoriteMovies)
                     await send(.moviesResponse(result ?? []))
                 }
             case let .moviesResponse(movies):
                 state.mediaItems += IdentifiedArrayOf<MediaItem>(uniqueElements: movies)
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .favoriteTVShows)
+                    let result = try? await networkManager.getMediaFor(endPoint: .favoriteTVShows)
                     await send(.tvShowResponse(result ?? []))
                 }
             case let .tvShowResponse(tvShows):

@@ -10,8 +10,6 @@ import ComposableArchitecture
 
 struct MoviesTabView: View {
     
-    private let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
-    
     let columns = [
         GridItem(.flexible(), spacing: 5),
         GridItem(.flexible(), spacing: 5),
@@ -26,7 +24,7 @@ struct MoviesTabView: View {
                 LazyVGrid(columns: columns, spacing: 0) {
                     ForEach(store.mediaItems) { mediaItem in
                         NavigationLink(state: MediaItemDetailsFeature.State(mediaItem: mediaItem, reviews: [])) {
-                            AsyncImage(url: URL(string: imageDownloadBaseURL + (mediaItem.posterPath ?? ""))) { phase in
+                            AsyncImage(url: URL(string: store.state.imageDownloadBaseURL + (mediaItem.posterPath ?? ""))) { phase in
                                 switch phase {
                                 case .empty:
                                     ProgressView()

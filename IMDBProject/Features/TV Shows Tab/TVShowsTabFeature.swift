@@ -15,6 +15,7 @@ struct TVShowsTabFeature {
     
     @ObservableState
     struct State: Equatable {
+        let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
         var mediaItems: IdentifiedArrayOf<MediaItem>
         var path = StackState<MediaItemDetailsFeature.State>()
     }
@@ -22,7 +23,7 @@ struct TVShowsTabFeature {
     enum Action: Equatable {
         case viewOnAppear
         case topRatedTVShowResponse([MediaItem])
-        case trendingTVShows([MediaItem]) // used trending instead of now playing, there isn't a now playing TVShow api GET request
+        case trendingTVShows([MediaItem]) // used trending instead of now playing, there isn't a now playing TVShow in the API GET requests
         case popularTVShowResponse([MediaItem])
         case path(StackAction<MediaItemDetailsFeature.State, MediaItemDetailsFeature.Action>)
     }
@@ -33,19 +34,19 @@ struct TVShowsTabFeature {
                 
             case .viewOnAppear:
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .topRatedTVshows)
+                    let result = try? await networkManager.getMediaFor(endPoint: .topRatedTVShows)
                     await send(.topRatedTVShowResponse(result ?? []))
                 }
             case let .topRatedTVShowResponse(tvShows):
                 state.mediaItems += IdentifiedArrayOf<MediaItem>(uniqueElements: tvShows)
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .trendingTVShows)
+                    let result = try? await networkManager.getMediaFor(endPoint: .trendingTVShows)
                     await send(.trendingTVShows(result ?? []))
                 }
             case let .trendingTVShows(tvShows):
                 state.mediaItems += IdentifiedArrayOf<MediaItem>(uniqueElements: tvShows)
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: .popularTVShows)
+                    let result = try? await networkManager.getMediaFor(endPoint: .popularTVShows)
                     await send(.popularTVShowResponse(result ?? []))
                 }
             case let .popularTVShowResponse(movies):

@@ -9,9 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct FavoritesTabView: View {
-    
-    private let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
-    
+        
     @Bindable var store: StoreOf<FavoritesTabFeature>
     
     var body: some View {
@@ -19,9 +17,8 @@ struct FavoritesTabView: View {
             List(store.state.mediaItems) { mediaItem in
                 NavigationLink(state: MediaItemDetailsFeature.State(mediaItem: mediaItem, reviews: [])) {
                     VStack {
-                        AsyncImage(url: URL(string: imageDownloadBaseURL + (mediaItem.posterPath ?? ""))) { phase in
+                        AsyncImage(url: URL(string: store.state.imageDownloadBaseURL + (mediaItem.posterPath ?? ""))) { phase in
                             if let image = phase.image {
-                                // Display the loaded image
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)

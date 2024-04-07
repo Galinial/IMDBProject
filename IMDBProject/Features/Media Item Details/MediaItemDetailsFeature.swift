@@ -34,7 +34,7 @@ struct MediaItemDetailsFeature {
                 
             case let .viewOnAppear(mediaItem):
                 return .run { send in
-                    let result = try? await networkManager.getMediaFor(urlExtension: mediaItem.mediaResult == .movie ? .favoriteMovies : .favoriteTVShows)
+                    let result = try? await networkManager.getMediaFor(endPoint: mediaItem.mediaResult == .movie ? .favoriteMovies : .favoriteTVShows)
                     await send(.isFavoriteResponse(result ?? []))
 
                 }

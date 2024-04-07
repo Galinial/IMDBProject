@@ -9,9 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct HomeScreenView: View {
-    
-    private let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
-    
+        
     @Bindable var store: StoreOf<HomeScreenFeature>
     
     var body: some View {
@@ -21,9 +19,8 @@ struct HomeScreenView: View {
                     ForEach(store.state.filteredMedia) { mediaItem in
                         NavigationLink(state: MediaItemDetailsFeature.State(mediaItem: mediaItem, reviews: [])) {
                             VStack {
-                                AsyncImage(url: URL(string: imageDownloadBaseURL + (mediaItem.posterPath ?? ""))) { phase in
+                                AsyncImage(url: URL(string: store.imageDownloadBaseURL + (mediaItem.posterPath ?? ""))) { phase in
                                     if let image = phase.image {
-                                        // Display the loaded image
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
