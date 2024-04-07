@@ -18,7 +18,7 @@ struct HomeScreenView: View {
         NavigationStackStore(self.store.scope(state: \.path, action: \.path)) {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
-                    ForEach(store.state.mediaItems) { mediaItem in
+                    ForEach(store.state.filteredMedia) { mediaItem in
                         NavigationLink(state: MediaItemDetailsFeature.State(mediaItem: mediaItem, reviews: [])) {
                             VStack {
                                 AsyncImage(url: URL(string: imageDownloadBaseURL + (mediaItem.posterPath ?? ""))) { phase in
@@ -27,10 +27,10 @@ struct HomeScreenView: View {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 250, height: 600)
+                                            .frame(width: 250, height: 500)
                                     } else {
                                         ProgressView()
-                                            .frame(width: 250, height: 600)
+                                            .frame(width: 250, height: 500)
                                     }
                                 }
                                 .clipShape(RoundedRectangle(cornerRadius: 15))
@@ -41,7 +41,7 @@ struct HomeScreenView: View {
                                     .font(.headline)
                                     .truncationMode(.tail)
                                     .foregroundStyle(.black)
-                                    
+                                
                             }
                             .frame(width: 250)
                             .padding(.horizontal, 8)
@@ -50,10 +50,12 @@ struct HomeScreenView: View {
                 }
                 .padding(.horizontal, 8)
             }
-        } destination: { store in
+            .searchable(text: $store.searchTerm, placement: .navigationBarDrawer(displayMode: .always))
+        }destination: { store in
             MediaItemDetailsView(store: store)
         }
-            .onAppear() {
+        
+        .onAppear() {
             store.send(.viewOnAppear)
         }
     }

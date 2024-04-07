@@ -37,7 +37,7 @@ struct MoviesTabFeature {
                     await send(.topRatedMoviesResponse(result ?? []))
                 }
             case let .topRatedMoviesResponse(movies):
-                state.mediaItems = IdentifiedArrayOf<MediaItem>(uniqueElements: movies)
+                state.mediaItems += IdentifiedArrayOf<MediaItem>(uniqueElements: movies)
                 return .run { send in
                     let result = try? await networkManager.getMediaFor(urlExtension: .nowPlayingMovies)
                     await send(.nowPlayingMoviesResponse(result ?? []))

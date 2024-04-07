@@ -15,11 +15,15 @@ struct AppFeature {
     struct State: Equatable {
         var tab1 = HomeScreenFeature.State(mediaItems: [])
         var tab2 = MoviesTabFeature.State(mediaItems: [])
+        var tab3 = TVShowsTabFeature.State(mediaItems: [])
+        var tab4 = FavoritesTabFeature.State(mediaItems: [])
     }
     
     enum Action {
         case tab1(HomeScreenFeature.Action)
         case tab2(MoviesTabFeature.Action)
+        case tab3(TVShowsTabFeature.Action)
+        case tab4(FavoritesTabFeature.Action)
     }
     
     var body: some ReducerOf<Self> {
@@ -29,6 +33,12 @@ struct AppFeature {
         }
         Scope(state: \.tab2, action: \.tab2) {
             MoviesTabFeature()
+        }
+        Scope(state: \.tab3, action: \.tab3) {
+            TVShowsTabFeature()
+        }
+        Scope(state: \.tab4, action: \.tab4) {
+            FavoritesTabFeature()
         }
         
         Reduce { state, action in

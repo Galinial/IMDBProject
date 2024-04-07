@@ -29,6 +29,20 @@ struct AppView: View {
                         icon: { Image(systemName: "film")}
                     )
                 }
+            TVShowsTabView(store: store.scope(state: \.tab3, action: \.tab3))
+                .tabItem {
+                    Label(
+                        title: { Text("TV Shows") },
+                        icon: { Image(systemName: "tv")}
+                    )
+                }
+            FavoritesTabView(store: store.scope(state: \.tab4, action: \.tab4))
+                .tabItem {
+                    Label(
+                        title: { Text("Favorites") },
+                        icon: { Image(systemName: "star.fill")}
+                    )
+                }
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  MoviesTabView.swift
+//  TVShowsTabView.swift
 //  IMDBProject
 //
 //  Created by gal linial on 06/04/2024.
@@ -8,17 +8,17 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct MoviesTabView: View {
+struct TVShowsTabView: View {
     
     private let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
     
     let columns = [
-        GridItem(.flexible(), spacing: 5),
-        GridItem(.flexible(), spacing: 5),
-        GridItem(.flexible(), spacing: 5)
+        GridItem(.flexible(), spacing: 0),
+        GridItem(.flexible(), spacing: 0),
+        GridItem(.flexible(), spacing: 0)
     ]
     
-    @Bindable var store: StoreOf<MoviesTabFeature>
+    @Bindable var store: StoreOf<TVShowsTabFeature>
     
     var body: some View {
         NavigationStackStore(self.store.scope(state: \.path, action: \.path)) {
@@ -54,3 +54,5 @@ struct MoviesTabView: View {
         }
     }
 }
+
+

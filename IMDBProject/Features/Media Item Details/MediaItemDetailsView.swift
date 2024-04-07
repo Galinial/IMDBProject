@@ -12,7 +12,7 @@ struct MediaItemDetailsView: View {
     
     private let imageDownloadBaseURL = "https://image.tmdb.org/t/p/original"
     
-    let store: StoreOf<MediaItemDetailsFeature>
+    @Bindable var store: StoreOf<MediaItemDetailsFeature>
     
     var body: some View {
         Form {
@@ -34,6 +34,11 @@ struct MediaItemDetailsView: View {
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 15))
+                    Button {
+                        store.send(.favoriteButtonTapped(store.mediaItem))
+                    } label: {
+                        Image(systemName: store.state.isFavorite ? "star.fill" : "star")
+                    }
                     Text("Title: \(store.mediaItem.originalName)")
                     Text("Rating: \(String(format: "%.1f", store.mediaItem.voteAverage))")
                     Text("Overview: \(store.mediaItem.overview)")
@@ -51,18 +56,10 @@ struct MediaItemDetailsView: View {
                     }
                 }
             }
-            .onAppear {
+            .onAppear() {
                 store.send(.viewOnAppear(store.mediaItem))
             }
         }
         .navigationTitle(Text(store.mediaItem.originalName))
     }
-}
-
-#Preview {
-    MediaItemDetailsView(
-        store: Store(
-            initialState: MediaItemDetailsFeature.State(mediaItem: MediaItem(genreIds: [], id: 1, originalLanguage: "", overview: "", popularity: 0.0, voteAverage: 0.0, voteCount: 0, originalName: "Kung Fu Panda 4", mediaResult: .movie), reviews: [])) {
-                MediaItemDetailsFeature()
-            })
 }
